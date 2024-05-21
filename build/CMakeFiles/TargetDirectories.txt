@@ -1,0 +1,5 @@
+C:/Users/Msi/Desktop/School/Informatica/projects/MenuDemo/build/CMakeFiles/edit_cache.dir
+C:/Users/Msi/Desktop/School/Informatica/projects/MenuDemo/build/CMakeFiles/rebuild_cache.dir
+C:/Users/Msi/Desktop/School/Informatica/projects/MenuDemo/build/src/CMakeFiles/MenuDemo.dir
+C:/Users/Msi/Desktop/School/Informatica/projects/MenuDemo/build/src/CMakeFiles/edit_cache.dir
+C:/Users/Msi/Desktop/School/Informatica/projects/MenuDemo/build/src/CMakeFiles/rebuild_cache.dir
