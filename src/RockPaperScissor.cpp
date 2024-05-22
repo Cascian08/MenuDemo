@@ -8,42 +8,49 @@
 using namespace std; 
 
 void GamesLibrary::Games::RockPaperScissor(){
-    string scelta;
-    string mosse[3] = {"rock", "paper", "scissor"};
+    string choice;
+    string moves[3] = {"rock", "paper", "scissor"};
     
     do{
-        cout << "Scegliere una mossa tra: 'rock', 'paper', 'scissor'.\n" << ">>> " ;
-        cin >> scelta;
-    }while(find(begin(mosse), end(mosse), scelta) == end(mosse));
+        cout << "\nChoose a move between: 'rock', 'paper', 'scissor'.\n" << ">>> " ;
+        cin >> choice;
+    }while(find(begin(moves), end(moves), choice) == end(moves));
 
     random_device rd;
     mt19937 engine(rd());
     uniform_int_distribution<int> range(0,3);
     
     
-    string sceltaAvversario = mosse[range(engine)];
-    cout << "\nL'avversario ha scelto: " << sceltaAvversario;
+    string opponentChoice = moves[range(engine)];
+    cout << "\nThe opponent has chosen: " << opponentChoice;
 
     cout << "\nRisultato: ";
-    if(scelta == sceltaAvversario){
-        cout << "Pari\n";
-    }else if(scelta == "paper" && sceltaAvversario =="rock"){
-        cout << "Hai vinto!\n";
-    }else if(scelta == "rock" && sceltaAvversario == "scissor"){
-        cout << "Hai vinto!\n";
-    }else if(scelta ==  "scissor" && sceltaAvversario == "paper"){
-        cout << "Hai vinto!\n";
+    if(choice == opponentChoice){
+        cout << "Draw!\n";
+    }else if(choice == "paper" && opponentChoice =="rock"){
+        cout << "You win!!!\n";
+    }else if(choice == "rock" && opponentChoice == "scissor"){
+        cout << "You win!!!\n";
+    }else if(choice ==  "scissor" && opponentChoice == "paper"){
+        cout << "You win!!!\n";
     }else{
-        cout << "Hai Perso...\n";
+        cout << "You lose...\n";
     }
 
-    char s;
-    cout << "\nVuoi continuare?(S/n)\n" << ">>> ";
-    cin >> s;
-    if(tolower(s) == 's'){
+    char c;
+    cout << "\nRestart?(Y/n)\n" << ">>> ";
+
+    while(!(cin >> c) ||  (tolower(c)!= 'y' && tolower(c) != 'n')){
+        cout << "\nPlese select a valid option!\n";
+        cout << ">>> ";
+    }
+
+    c = tolower(c);
+
+    if(c == 'y'){
         RockPaperScissor();
-    }else{
-        cout << "\nChiusura Gioco...\n";
-        this_thread::sleep_for(chrono::milliseconds(1000));
+    }else if(c == 'n'){
+        cout << "\nClosing the game...\n";
+        this_thread::sleep_for(chrono::milliseconds(500));
     }
 }

@@ -32,13 +32,13 @@ void Menu::Menu::menu(){
     
     GamesLibrary::Games Games;
 
-    int scelta;
+    int choose;
     bool q = 0;
     drawMenu(); 
     while(q!=1){
         cout << ">>> ";
-        cin >> scelta;
-        switch(scelta){
+        cin >> choose;
+        switch(choose){
             case 1:
                 Games.RockPaperScissor();
                 break;
@@ -46,14 +46,14 @@ void Menu::Menu::menu(){
                 Games.TicTacToe();
                 break;
             case 3:
-                cout << "\nChiusura programma...\n";
-                this_thread::sleep_for(chrono::milliseconds(1000));
+                cout << "\nClosing the program...\n";
+                this_thread::sleep_for(chrono::milliseconds(500));
                 q = 1;
                 break;            
             default:
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cout << "Errore! Inserire un opzione valida!\n"; 
+                cout << "Error! Please insert a valid option!\n"; 
         }
     }
 }

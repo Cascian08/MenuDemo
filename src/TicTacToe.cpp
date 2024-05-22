@@ -42,6 +42,38 @@ auto GamesLibrary::Games::checkForWin(auto table, int rows, int cols){
     return 0;
 }
 
+auto GamesLibrary::Games::minimax(auto& table, int rows, int cols, int depth, bool isMaxingPlayer, int alpha, int beta){
+    int result = checkForWin(table,3,3);
+
+    if(result != 0){
+        return result;
+    }
+    
+    if(!checkForZero(table,3,3)){
+        return 0;
+    }
+
+    int bestScore = -9999;
+    
+    for(int i = 0; i < rows; i++){
+        for(int j = 0; j < cols; j++){
+            if(table[i][j] == 0){
+                table[i][j] = 2;
+                int score = minimax(table, rows, cols, depth+1, false, alpha, beta);
+                table[i][j] = 0;
+
+                bestScore = max(score, bestScore);
+                alpha = max(alpha, score);
+
+                if(beta <= alpha){
+                    break;
+                }
+            }
+        }
+    }
+    return bestScore;
+}
+
 auto GamesLibrary::Games::move(auto& table, int rows, int cols, int player){
     int x,y;
     
@@ -51,16 +83,16 @@ auto GamesLibrary::Games::move(auto& table, int rows, int cols, int player){
 
     if(player == 1){
         do {
-            cout << "\nE' il tuo turno!\n" << ">>> ";
+            cout << "\nIt's your turn!\n" << ">>> ";
             while(!(cin >> x) || x < 1 || x > 3){
-                cout << "Errore! Inserire coordinate valide!\n" << ">>> ";
+                cout << "Error! Please insert a valid coordinate!\n" << ">>> ";
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
             }
 
             cout << ">>> ";
             while(!(cin >> y) || y < 1 || y > 3){
-                cout << "Errore! Inserire coordinate valide!\n" << ">>> ";
+                cout << "Error! Please insert a valid coordinate!\n" << ">>> ";
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
             }
@@ -72,14 +104,27 @@ auto GamesLibrary::Games::move(auto& table, int rows, int cols, int player){
 
     }else{
 
-        cout << "\nE' il turno dell'avversario\n";    
-        do{
-            x = rangeXY(engine);
-            y = rangeXY(engine);
-        }while(table[x][y] != 0);
+        cout << "\nIt's opponent turn!\n";
+        int bestScore = -9999;
+        for(int i = 0; i < rows; i++){
+            for(int j = 0; j < cols; j++){
+                if(table[i][j] == 0){
+                    table[i][j] = 2;
+                    int score = minimax(table, rows, cols, 0, false, -9999, 9999);
+                    table[i][j] = 0;
+
+                    if(score > bestScore){
+                        bestScore = score;
+                        x = i;
+                        y = j;
+                    }
+                }
+            }
+        }
 
         table[x][y] = 2;
-        cout << "L'avversario ha messo 'O' in: " << x+1 << "," << y+1 << "\n\n";
+
+        cout << "\nOpponent placed 'O' in: " << x+1 << " , " << y+1 << "\n\n";
     }
 }
 
@@ -127,25 +172,36 @@ void GamesLibrary::Games::TicTacToe(){
         player = 3 - player;
     }
 
-    int winner = checkForWin(table,3,3);
+    int result = checkForWin(table,3,3);
 
-    if(checkForZero(table,3,3) && winner == 0){
-        cout << "\nParità\n";
-    }
-    if(winner == 1){
-        cout << "\nHai vinto!!!\n";
-    }
-    if(winner == 2){
-        cout << "\nHai perso...\n";
-    }
-
-    char s;
-    cout << "\nVuoi continuare?(S/n)\n" << ">>> ";
-    cin >> s;
-    if(tolower(s) == 's'){
-        TicTacToe();
+    if(checkForZero(table,3,3) == false && result == 0){
+        cout << "\nDraw!\n";
+    }else if(result == 1){
+        cout << "\nYou Win!!\n";
     }else{
-        cout << "Chiusura gioco...\n";
-        this_thread::sleep_for(chrono::milliseconds(1000));
+        cout << "\nYou lose..\n";
+    }
+
+    /*
+    if(result == 2){
+        cout << "\nYou lose...\n";
+    }
+    */
+
+    char c;
+    cout << "\nRestart?(Y/n)\n" << ">>> ";
+
+    while(!(cin >> c) ||  (tolower(c)!= 'y' && tolower(c) != 'n')){
+        cout << "\nPlese select a valid option!\n";
+        cout << ">>> ";
+    }
+
+    c = tolower(c);
+
+    if(c == 'y'){
+        TicTacToe();
+    }else if(c == 'n'){
+        cout << "\nClosing the game...\n";
+        this_thread::sleep_for(chrono::milliseconds(500));
     }
 }
