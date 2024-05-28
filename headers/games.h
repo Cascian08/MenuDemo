@@ -1,11 +1,11 @@
 namespace GamesLibrary{
     class Games {
     private:
-        auto checkForZero(auto table, int rows, int cols);
-        auto checkForWin(auto table, int rows, int cols);
-        auto minimax(auto &table, int row, int cols, int depth, bool isMaxingPlayer, int alpha, int beta);
-        auto move(auto& table, int rows, int cols, int player);
-        auto drawTable(auto table, int rows, int cols);
+        bool checkForZero(int (*table)[3]);
+        int checkForWin(int (*table)[3]);
+        int minimax(int (&table)[3][3], int depth, bool isMax);
+        void move(int (&table)[3][3], int player);
+        void drawTable(int (*table)[3]);
     public:
         void TicTacToe();
         void RockPaperScissor();

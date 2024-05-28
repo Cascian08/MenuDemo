@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 #include <random>
 #include <chrono>
 #include <thread>
@@ -6,9 +7,9 @@
 
 using namespace std;
 
-auto GamesLibrary::Games::checkForZero(auto table, int rows, int cols){
-    for(int i = 0; i < rows; i++){
-        for(int j = 0; j < cols; j++){
+bool GamesLibrary::Games::checkForZero(int (*table)[3]){
+    for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 3; j++){
             if(table[i][j] == 0){
                 return true;
             }
@@ -18,14 +19,14 @@ auto GamesLibrary::Games::checkForZero(auto table, int rows, int cols){
 }
 
 
-auto GamesLibrary::Games::checkForWin(auto table, int rows, int cols){
-    for(int i = 0; i < rows; i++){
+int GamesLibrary::Games::checkForWin(int (*table)[3]){
+    for(int i = 0; i < 3; i++){
         if(table[i][0] != 0 && table[i][0] == table[i][1] && table[i][1] == table[i][2]){
             return table[i][0];
         }
     }
 
-    for(int i = 0; i < cols; i++){
+    for(int i = 0; i < 3; i++){
         if(table[0][i] != 0 && table[0][i] == table[1][i] && table[1][i] == table[2][i]){
             return table[0][i];
         }
@@ -42,39 +43,52 @@ auto GamesLibrary::Games::checkForWin(auto table, int rows, int cols){
     return 0;
 }
 
-auto GamesLibrary::Games::minimax(auto& table, int rows, int cols, int depth, bool isMaxingPlayer, int alpha, int beta){
-    int result = checkForWin(table,3,3);
+int GamesLibrary::Games::minimax(int (&table)[3][3], int depth, bool isMax){
+    int winner = checkForWin(table);
 
-    if(result != 0){
-        return result;
+    if(winner == 1){
+        return 10; 
     }
-    
-    if(!checkForZero(table,3,3)){
+
+    if(winner == 2){
+        return -10; 
+    }
+
+    if(checkForZero(table) == false){
         return 0;
     }
 
-    int bestScore = -9999;
-    
-    for(int i = 0; i < rows; i++){
-        for(int j = 0; j < cols; j++){
-            if(table[i][j] == 0){
-                table[i][j] = 2;
-                int score = minimax(table, rows, cols, depth+1, false, alpha, beta);
-                table[i][j] = 0;
-
-                bestScore = max(score, bestScore);
-                alpha = max(alpha, score);
-
-                if(beta <= alpha){
-                    break;
+    if(isMax){
+        int bestScore = -numeric_limits<int>::max();
+        for(int i = 0; i < 3; i++){
+            for(int j = 0; j < 3; j++){
+                if(table[i][j] == 0){
+                    table[i][j] = 1;
+                    int score = minimax(table, depth+1, false);
+                    table[i][j] = 0;
+                    bestScore = max(score,bestScore);
                 }
             }
         }
+        return bestScore;
+    }else{
+        int bestScore = numeric_limits<int>::max();
+        for(int i = 0; i < 3; i++){
+            for(int j = 0; j < 3; j++){
+                if(table[i][j] == 0){
+                    table[i][j] = 2;
+                    int score = minimax(table, depth+1, true);
+                    table[i][j] = 0;
+                    bestScore = min(score,bestScore);
+                } 
+            }
+        }
+        return bestScore;
     }
-    return bestScore;
 }
 
-auto GamesLibrary::Games::move(auto& table, int rows, int cols, int player){
+
+void GamesLibrary::Games::move(int (&table)[3][3], int player){
     int x,y;
     
     random_device rd;
@@ -103,14 +117,13 @@ auto GamesLibrary::Games::move(auto& table, int rows, int cols, int player){
         table[x-1][y-1] = 1;
 
     }else{
-
         cout << "\nIt's opponent turn!\n";
-        int bestScore = -9999;
-        for(int i = 0; i < rows; i++){
-            for(int j = 0; j < cols; j++){
+        int bestScore = -numeric_limits<int>::max();
+        for(int i = 0; i < 3; i++){
+            for(int j = 0; j < 3; j++){
                 if(table[i][j] == 0){
                     table[i][j] = 2;
-                    int score = minimax(table, rows, cols, 0, false, -9999, 9999);
+                    int score = minimax(table, 0, true);
                     table[i][j] = 0;
 
                     if(score > bestScore){
@@ -128,11 +141,11 @@ auto GamesLibrary::Games::move(auto& table, int rows, int cols, int player){
     }
 }
 
-auto GamesLibrary::Games::drawTable(auto table, int rows, int cols){
-    string tableToDraw[rows][cols];
+void GamesLibrary::Games::drawTable(int (*table)[3]){
+    string tableToDraw[3][3];
         
-    for(int i = 0; i < rows; i++){
-        for(int j = 0; j < cols; j++){
+    for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 3; j++){
             if(table[i][j] == 1){
                 tableToDraw[i][j] = "X";
             }else if(table[i][j] == 2){
@@ -144,7 +157,7 @@ auto GamesLibrary::Games::drawTable(auto table, int rows, int cols){
     }
         
         
-    for(int i = 0; i < rows; i++){
+    for(int i = 0; i < 3; i++){
         cout << " " << tableToDraw[i][0] << "|"<< tableToDraw[i][1] << "|" << tableToDraw[i][2] << "\n";
         if(i < 2){
             cout << "-------\n";
@@ -153,9 +166,9 @@ auto GamesLibrary::Games::drawTable(auto table, int rows, int cols){
 }
 
 void GamesLibrary::Games::TicTacToe(){
-    int  table[3][3] = {{0,0,0},
-                        {0,0,0},
-                        {0,0,0}};
+    int table[3][3] = {{0,0,0},
+                       {0,0,0},
+                       {0,0,0}};
 
     int player;
     
@@ -166,15 +179,15 @@ void GamesLibrary::Games::TicTacToe(){
     player = range(engine);    
 
 
-    while(checkForZero(table,3,3) && checkForWin(table,3,3) == 0){
-        move(table,3,3,player);
-        drawTable(table,3,3);
+    while(checkForZero(table) && checkForWin(table) == 0){
+        move(table,player);
+        drawTable(table);
         player = 3 - player;
     }
 
-    int result = checkForWin(table,3,3);
+    int result = checkForWin(table);
 
-    if(checkForZero(table,3,3) == false && result == 0){
+    if(checkForZero(table) == false && result == 0){
         cout << "\nDraw!\n";
     }else if(result == 1){
         cout << "\nYou Win!!\n";
@@ -182,11 +195,6 @@ void GamesLibrary::Games::TicTacToe(){
         cout << "\nYou lose..\n";
     }
 
-    /*
-    if(result == 2){
-        cout << "\nYou lose...\n";
-    }
-    */
 
     char c;
     cout << "\nRestart?(Y/n)\n" << ">>> ";
@@ -200,7 +208,9 @@ void GamesLibrary::Games::TicTacToe(){
 
     if(c == 'y'){
         TicTacToe();
-    }else if(c == 'n'){
+    }
+    
+    if(c == 'n'){
         cout << "\nClosing the game...\n";
         this_thread::sleep_for(chrono::milliseconds(500));
     }
