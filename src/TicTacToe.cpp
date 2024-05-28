@@ -1,5 +1,5 @@
 #include <iostream>
-#include <cmath>
+#include <vector>
 #include <random>
 #include <chrono>
 #include <thread>
@@ -43,28 +43,28 @@ int GamesLibrary::Games::checkForWin(int (*table)[3]){
     return 0;
 }
 
-int GamesLibrary::Games::minimax(int (&table)[3][3], int depth, bool isMax){
+int GamesLibrary::Games::minimax(int (&table)[3][3], int depth, bool isMax, int maxDepth){
     int winner = checkForWin(table);
 
     if(winner == 1){
-        return 10; 
-    }
-
-    if(winner == 2){
         return -10; 
     }
 
-    if(checkForZero(table) == false){
+    if(winner == 2){
+        return 10; 
+    }
+
+    if(checkForZero(table) == false || depth == maxDepth){
         return 0;
     }
 
     if(isMax){
-        int bestScore = -numeric_limits<int>::max();
+        int bestScore = numeric_limits<int>::min();
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 3; j++){
                 if(table[i][j] == 0){
-                    table[i][j] = 1;
-                    int score = minimax(table, depth+1, false);
+                    table[i][j] = 2;
+                    int score = minimax(table, depth+1, false, maxDepth);
                     table[i][j] = 0;
                     bestScore = max(score,bestScore);
                 }
@@ -76,8 +76,8 @@ int GamesLibrary::Games::minimax(int (&table)[3][3], int depth, bool isMax){
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 3; j++){
                 if(table[i][j] == 0){
-                    table[i][j] = 2;
-                    int score = minimax(table, depth+1, true);
+                    table[i][j] = 1;
+                    int score = minimax(table, depth+1, true, maxDepth);
                     table[i][j] = 0;
                     bestScore = min(score,bestScore);
                 } 
@@ -88,7 +88,7 @@ int GamesLibrary::Games::minimax(int (&table)[3][3], int depth, bool isMax){
 }
 
 
-void GamesLibrary::Games::move(int (&table)[3][3], int player){
+void GamesLibrary::Games::move(int (&table)[3][3], int player, int difficulty){
     int x,y;
     
     random_device rd;
@@ -99,7 +99,7 @@ void GamesLibrary::Games::move(int (&table)[3][3], int player){
         do {
             cout << "\nIt's your turn!\n" << ">>> ";
             while(!(cin >> x) || x < 1 || x > 3){
-                cout << "Error! Please insert a valid coordinate!\n" << ">>> ";
+                cout << "Error! Please insert a valid option!\n" << ">>> ";
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
             }
@@ -117,27 +117,74 @@ void GamesLibrary::Games::move(int (&table)[3][3], int player){
         table[x-1][y-1] = 1;
 
     }else{
-        cout << "\nIt's opponent turn!\n";
-        int bestScore = -numeric_limits<int>::max();
-        for(int i = 0; i < 3; i++){
-            for(int j = 0; j < 3; j++){
-                if(table[i][j] == 0){
-                    table[i][j] = 2;
-                    int score = minimax(table, 0, true);
-                    table[i][j] = 0;
+        cout << "\nIt's opponent's turn!\n";
+        if(difficulty == 1){
 
-                    if(score > bestScore){
-                        bestScore = score;
-                        x = i;
-                        y = j;
+            vector<pair<int,int>> valid_moves;
+            for(int i = 0; i < 3; i++){
+                for(int j = 0; j < 3; j++){
+                    if(table[i][j] == 0){
+                        valid_moves.push_back(make_pair(i,j));
                     }
                 }
             }
+            
+            pair<int,int> random_move = valid_moves[rand() % valid_moves.size()];
+            table[random_move.first][random_move.second] = 2;
+
+        }else if(difficulty == 2){
+            for(int i = 0; i < 3; i++){
+                for(int j = 0; j < 3; j++){
+                    if(table[i][j] == 0){
+                        table[i][j] = 1;
+                        int result = checkForWin(table);
+                        if(result == 1 && rand()%2 == 0){
+                            table[i][j] = 2;
+                            cout << "\nOpponent placed 'O' in: " << i+1 << "," << j+1 << "\n\n";
+                            return;
+                        }
+                        table[i][j] = 0;
+                    }
+                }
+            }
+
+            vector<pair<int,int>> valid_moves;
+            for(int i = 0; i < 3; i++){
+                for(int j = 0; j < 3; j++){
+                    if(table[i][j] == 0){
+                        valid_moves.push_back(make_pair(i,j));
+                    }
+                }
+            }
+            pair<int,int> random_move = valid_moves[rand() % valid_moves.size()];
+            table[random_move.first][random_move.second] = 2;
+            cout << "\nOpponent placed 'O' in: " << random_move.first+1 << "," << random_move.second+1 << "\n\n";
+
+        }else{
+            int bestScore = numeric_limits<int>::min();
+            pair<int,int> move;
+            int score;
+            for(int i = 0; i < 3; i++){
+                for(int j = 0; j < 3; j++){
+                    if(table[i][j] == 0){
+                        table[i][j] = 2;
+                        if(difficulty == 3){
+                            score = minimax(table, 0, false, 2);
+                        }else{
+                            score = minimax(table, 0, false, -1); 
+                        }
+                        table[i][j] = 0;
+
+                        if(score > bestScore){
+                            bestScore = score;
+                            move = {i,j};
+                        }
+                    }
+                }
+            }
+        table[move.first][move.second] = 2;
+        cout << "\nOpponent placed 'O' in: " << move.first+1 << "," << move.first+1 << "\n\n";
         }
-
-        table[x][y] = 2;
-
-        cout << "\nOpponent placed 'O' in: " << x+1 << " , " << y+1 << "\n\n";
     }
 }
 
@@ -170,7 +217,7 @@ void GamesLibrary::Games::TicTacToe(){
                        {0,0,0},
                        {0,0,0}};
 
-    int player;
+    int player,difficulty;
     
     random_device rd;
     mt19937 engine(rd());
@@ -179,8 +226,14 @@ void GamesLibrary::Games::TicTacToe(){
     player = range(engine);    
 
 
+    cout << "Please select a difficulty between: Easy(1), Medium(2), Hard(3), Unbeatable(4)\n" << ">>> ";
+    while(!(cin >> difficulty) || difficulty < 1 || difficulty > 4){
+        cout << "Please select a valid difficulty!\n" << ">>> ";
+    }
+
+
     while(checkForZero(table) && checkForWin(table) == 0){
-        move(table,player);
+        move(table, player, difficulty);
         drawTable(table);
         player = 3 - player;
     }
