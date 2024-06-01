@@ -14,11 +14,11 @@ In every release, there's already a MenuDemo.exe file, but if you want to, you c
 ``` 
  2. Get into the MenuDemo's folder
 ```markdown
-   $ cd .\MenuDemo\
+   $ cd .\MenuDemo
 ```
  3. Make & run MenuDemo
 ```markdown
-   $ cd .\build\
+   $ cd .\build
    $ make
    $ cd ..
    $ .\MenuDemo.exe
