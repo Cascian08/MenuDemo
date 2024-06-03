@@ -1,12 +1,13 @@
 #include <iostream>
 #include <vector>
-#include <random>
+#include <cstdlib>
 #include <chrono>
 #include <thread>
 #include "../headers/games.h"
 
 using namespace std;
 
+//Checks for zeros in the table
 bool GamesLibrary::Games::checkForZero(int (*table)[3]){
     for(int i = 0; i < 3; i++){
         for(int j = 0; j < 3; j++){
@@ -18,7 +19,7 @@ bool GamesLibrary::Games::checkForZero(int (*table)[3]){
     return false;
 }
 
-
+//Checks for an eventual win
 int GamesLibrary::Games::checkForWin(int (*table)[3]){
     for(int i = 0; i < 3; i++){
         if(table[i][0] != 0 && table[i][0] == table[i][1] && table[i][1] == table[i][2]){
@@ -42,41 +43,42 @@ int GamesLibrary::Games::checkForWin(int (*table)[3]){
 
     return 0;
 }
-
+//Looks for the best computer move by using the minimax algorithm.
 int GamesLibrary::Games::minimax(int (&table)[3][3], int depth, bool isMax, int maxDepth){
     int winner = checkForWin(table);
-
+    //Assigns values based on the final state of the game.
     if(winner == 1){
-        return -10; 
+        return -10; //if the real player wins, the score = -10.
     }
 
     if(winner == 2){
-        return 10; 
+        return 10; //if the computer wins, the score = +10.
     }
 
+    //If there are no more moves left or the maximum depth is reached, the game is a draw(score = 0).
     if(checkForZero(table) == false || depth == maxDepth){
         return 0;
     }
-
+    //If it's the computer's turn, the function tries to maximize the score.
     if(isMax){
         int bestScore = numeric_limits<int>::min();
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 3; j++){
                 if(table[i][j] == 0){
-                    table[i][j] = 2;
+                    table[i][j] = 2; 
                     int score = minimax(table, depth+1, false, maxDepth);
-                    table[i][j] = 0;
+                    table[i][j] = 0; 
                     bestScore = max(score,bestScore);
                 }
             }
         }
         return bestScore;
-    }else{
+    }else{//If it's the real player's turn, the function tries to minimize the score.
         int bestScore = numeric_limits<int>::max();
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 3; j++){
                 if(table[i][j] == 0){
-                    table[i][j] = 1;
+                    table[i][j] = 1; 
                     int score = minimax(table, depth+1, true, maxDepth);
                     table[i][j] = 0;
                     bestScore = min(score,bestScore);
@@ -87,15 +89,11 @@ int GamesLibrary::Games::minimax(int (&table)[3][3], int depth, bool isMax, int 
     }
 }
 
-
-void GamesLibrary::Games::move(int (&table)[3][3], int player, int difficulty){
+//Manages moves for both computer & real player.
+void GamesLibrary::Games::move(int (&table)[3][3], bool player, int difficulty){
     int x,y;
-    
-    random_device rd;
-    mt19937 engine(rd());
-    uniform_int_distribution<int> rangeXY(1,2);
 
-    if(player == 1){
+    if(player){//Real player's turn.
         do {
             cout << "\nIt's your turn!\n" << ">>> ";
             while(!(cin >> x) || x < 1 || x > 3){
@@ -116,7 +114,7 @@ void GamesLibrary::Games::move(int (&table)[3][3], int player, int difficulty){
 
         table[x-1][y-1] = 1;
 
-    }else{
+    }else{//Computer's turn.
         cout << "\nIt's opponent's turn!\n";
         if(difficulty == 1){
 
@@ -131,6 +129,7 @@ void GamesLibrary::Games::move(int (&table)[3][3], int player, int difficulty){
             
             pair<int,int> random_move = valid_moves[rand() % valid_moves.size()];
             table[random_move.first][random_move.second] = 2;
+            cout << "\nOpponent placed 'O' in: " << random_move.first+1 << "," << random_move.second+1 << "\n\n";
 
         }else if(difficulty == 2){
             for(int i = 0; i < 3; i++){
@@ -188,9 +187,10 @@ void GamesLibrary::Games::move(int (&table)[3][3], int player, int difficulty){
     }
 }
 
+//Draws the game table.
 void GamesLibrary::Games::drawTable(int (*table)[3]){
     string tableToDraw[3][3];
-        
+    
     for(int i = 0; i < 3; i++){
         for(int j = 0; j < 3; j++){
             if(table[i][j] == 1){
@@ -211,44 +211,43 @@ void GamesLibrary::Games::drawTable(int (*table)[3]){
         }
     }
 }
-
+//Main game function.
 void GamesLibrary::Games::TicTacToe(){
     int table[3][3] = {{0,0,0},
                        {0,0,0},
                        {0,0,0}};
 
-    int player,difficulty;
+    bool player;
+    int difficulty;
     
-    random_device rd;
-    mt19937 engine(rd());
-    uniform_int_distribution<int> range(1,2);
+    //Selects a random player(real player or computer.
+    player = (rand()%2==1) ? true : false;
 
-    player = range(engine);    
-
-
+    //Gets the computer difficulty
     cout << "Please select a difficulty between: Easy(1), Medium(2), Hard(3), Unbeatable(4)\n" << ">>> ";
     while(!(cin >> difficulty) || difficulty < 1 || difficulty > 4){
         cout << "Please select a valid difficulty!\n" << ">>> ";
     }
 
-
+    //The game continues until there are free spots and there's no win.
     while(checkForZero(table) && checkForWin(table) == 0){
         move(table, player, difficulty);
         drawTable(table);
-        player = 3 - player;
+        player = !player;
     }
-
+    
     int result = checkForWin(table);
 
-    if(checkForZero(table) == false && result == 0){
+    //Displays final state of the game. 
+    if(result == 0){
         cout << "\nDraw!\n";
-    }else if(result == 1){
+    }else if(result == 1){ 
         cout << "\nYou Win!!\n";
     }else{
-        cout << "\nYou lose..\n";
+        cout << "\nYou lose...\n";
     }
 
-
+    //Asks to restart the game.
     char c;
     cout << "\nRestart?(Y/n)\n" << ">>> ";
 

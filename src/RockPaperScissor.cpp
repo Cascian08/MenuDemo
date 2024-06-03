@@ -11,6 +11,8 @@ void GamesLibrary::Games::RockPaperScissor(){
     string choice;
     string moves[3] = {"rock", "paper", "scissor"};
     
+
+    //Gets a move by the user.
     do{
         cout << "\nChoose a move between: 'rock', 'paper', 'scissor'.\n" << ">>> " ;
         cin >> choice;
@@ -20,11 +22,12 @@ void GamesLibrary::Games::RockPaperScissor(){
     mt19937 engine(rd());
     uniform_int_distribution<int> range(0,3);
     
-    
+    //Computer randomly selects a move. 
     string opponentChoice = moves[range(engine)];
     cout << "\nThe opponent has chosen: " << opponentChoice;
 
-    cout << "\nRisultato: ";
+    //Displays the final Result:
+    cout << "\nFinal result: ";
     if(choice == opponentChoice){
         cout << "Draw!\n";
     }else if(choice == "paper" && opponentChoice =="rock"){
@@ -37,6 +40,8 @@ void GamesLibrary::Games::RockPaperScissor(){
         cout << "You lose...\n";
     }
 
+
+    //Asks to the user if he wants to restart.
     char c;
     cout << "\nRestart?(Y/n)\n" << ">>> ";
 

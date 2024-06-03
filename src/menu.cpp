@@ -8,6 +8,8 @@
 using namespace std;
 using namespace GamesLibrary;
 
+
+//Draws the main menu screen.
 void Menu::Menu::drawMenu(){
     cout << R"(                                              
  _    _      _                            _         ___  ___                ______                     _ 
@@ -28,13 +30,16 @@ void Menu::Menu::drawMenu(){
     )"<< "\n";
 }
 
+//Main menu function.
 void Menu::Menu::menu(){
     
     GamesLibrary::Games Games;
 
     int choose;
     bool q = 0;
+    
     drawMenu(); 
+    
     while(q!=1){
         cout << ">>> ";
         cin >> choose;
