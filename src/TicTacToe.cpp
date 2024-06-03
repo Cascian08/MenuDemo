@@ -220,7 +220,7 @@ void GamesLibrary::Games::TicTacToe(){
     bool player;
     int difficulty;
     
-    //Selects a random player(real player or computer.
+    //Selects a random player(real player or computer).
     player = (rand()%2==1) ? true : false;
 
     //Gets the computer difficulty

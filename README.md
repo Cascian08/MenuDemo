@@ -22,5 +22,6 @@ In every release, there's already a MenuDemo.exe file, but if you want to, you c
    $ make
    $ cd ..
    $ .\MenuDemo.exe
-```	
-The executable will be different depending on the OS you're working on.
+```
+> [!NOTE]	
+> The executable will be different depending on the OS you're working on.
