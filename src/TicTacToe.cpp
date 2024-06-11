@@ -1,10 +1,9 @@
 #include <iostream>
 #include <vector>
-#include <cstdlib>
+//#include <cstdlib>
 #include <chrono>
 #include <thread>
 #include "../headers/games.h"
-
 using namespace std;
 
 //Checks for zeros in the table
@@ -94,10 +93,11 @@ void GamesLibrary::Games::move(int (&table)[3][3], bool player, int difficulty){
     int x,y;
 
     if(player){//Real player's turn.
+        cout << "\nIt's your turn!\n";
         do {
-            cout << "\nIt's your turn!\n" << ">>> ";
+            cout << ">>> ";
             while(!(cin >> x) || x < 1 || x > 3){
-                cout << "Error! Please insert a valid option!\n" << ">>> ";
+                cout << "Error! Please insert a valid option!\n" << ">>> "; 
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
             }
@@ -109,6 +109,10 @@ void GamesLibrary::Games::move(int (&table)[3][3], bool player, int difficulty){
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
             }
             cout << "\n";
+
+            if(table[x-1][y-1] != 0){
+                cout << "Error! The position is already occupied!\n" << "\nPlease insert a valid position...\n";
+            }
 
         }while(table[x-1][y-1] != 0);
 
@@ -144,7 +148,7 @@ void GamesLibrary::Games::move(int (&table)[3][3], bool player, int difficulty){
                         }
                         table[i][j] = 0;
                     }
-                }
+                }   
             }
 
             vector<pair<int,int>> valid_moves;
@@ -211,6 +215,8 @@ void GamesLibrary::Games::drawTable(int (*table)[3]){
         }
     }
 }
+
+
 //Main game function.
 void GamesLibrary::Games::TicTacToe(){
     int table[3][3] = {{0,0,0},
@@ -227,6 +233,8 @@ void GamesLibrary::Games::TicTacToe(){
     cout << "Please select a difficulty between: Easy(1), Medium(2), Hard(3), Unbeatable(4)\n" << ">>> ";
     while(!(cin >> difficulty) || difficulty < 1 || difficulty > 4){
         cout << "Please select a valid difficulty!\n" << ">>> ";
+        cin.clear(); 
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
 
     //The game continues until there are free spots and there's no win.

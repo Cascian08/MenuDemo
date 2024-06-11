@@ -11,12 +11,13 @@ void GamesLibrary::Games::RockPaperScissor(){
     string choice;
     string moves[3] = {"rock", "paper", "scissor"};
     
-
     //Gets a move by the user.
-    do{
-        cout << "\nChoose a move between: 'rock', 'paper', 'scissor'.\n" << ">>> " ;
-        cin >> choice;
-    }while(find(begin(moves), end(moves), choice) == end(moves));
+    cout << "\nChoose a move between: 'rock', 'paper', 'scissor'.\n" << ">>> " ;    
+    while(!(cin >> choice) || find(begin(moves), end(moves), choice) == end(moves)){
+        cout << "\nError! Please insert a valid move...\n" << ">>> ";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
 
     random_device rd;
     mt19937 engine(rd());

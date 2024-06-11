@@ -182,4 +182,5 @@ src/CMakeFiles/MenuDemo.dir/menu.cpp.obj: \
  C:/msys64/ucrt64/include/c++/13.2.0/bits/unique_ptr.h \
  C:/msys64/ucrt64/include/c++/13.2.0/bits/this_thread_sleep.h \
  C:/Users/Msi/Desktop/School/Informatica/projects/MenuDemo/headers/games.h \
- C:/Users/Msi/Desktop/School/Informatica/projects/MenuDemo/headers/menu.h
+ C:/Users/Msi/Desktop/School/Informatica/projects/MenuDemo/headers/menu.h \
+ C:/msys64/ucrt64/include/c++/13.2.0/csignal

@@ -9,8 +9,9 @@ using namespace std;
 using namespace GamesLibrary;
 
 
+
 //Draws the main menu screen.
-void Menu::Menu::drawMenu(){
+void MenuLibrary::Menu::drawMenu(){
     cout << R"(                                              
  _    _      _                            _         ___  ___                ______                     _ 
 | |  | |    | |                          | |        |  \/  |                |  _  \                   | |
@@ -26,12 +27,23 @@ void Menu::Menu::drawMenu(){
                                  1 - Play Rock, paper, scissor.
                                      2 - Play Tic Tac Toe.
                                             3 - Quit.                                                                      
-    
+
+Press '4' to open the 'help' command.    
     )"<< "\n";
 }
 
+void MenuLibrary::Menu::help(){
+    cout << R"(
+    List of commands:
+
+    1 - Play: Rock, paper, scissor.
+    2 - Play: Tic Tac Toe.
+    3 - Quit, closes the program.
+    4 - Help, returns all the commands.)" << "\n\n";
+}
+
 //Main menu function.
-void Menu::Menu::menu(){
+void MenuLibrary::Menu::menu(){
     
     GamesLibrary::Games Games;
 
@@ -54,11 +66,15 @@ void Menu::Menu::menu(){
                 cout << "\nClosing the program...\n";
                 this_thread::sleep_for(chrono::milliseconds(500));
                 q = 1;
+                break;
+            case 4:
+                help();
                 break;            
             default:
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 cout << "Error! Please insert a valid option!\n"; 
+                cout << "Press '4' to open the 'help' command.\n";
         }
     }
 }

@@ -1,7 +1,7 @@
 #include "../headers/menu.h"
 
 int main(){
-    Menu::Menu Menu;
+    MenuLibrary::Menu Menu;
     Menu.menu();
     return 0;
 }
