@@ -1,6 +1,9 @@
 # MenuDemo
 ![MenuDemo](https://i.imgur.com/epgcVno.png)
 
+
+> [!WARNING]
+> Currently the build doesn't work properly, I'll fix it ASAP.
 ## What's MenuDemo ?
 MenuDemo is a basic demo of a cli menu. 
 This simple project was made due to an assigment given by my school professor.
